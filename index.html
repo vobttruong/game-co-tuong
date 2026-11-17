@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cờ Tướng Online</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>帥 Cờ Tướng Online 將</h1>
+<div class="wrap">
+  <div id="board">
+    <svg viewBox="0 0 9 10" preserveAspectRatio="none" id="lines"></svg>
+    <div id="toast"></div>
+  </div>
+  <div class="panel">
+    <div class="card" id="status"></div>
+    <div class="card">
+      <label>Chọn chế độ chơi</label>
+      <div class="seg big" data-for="mode"><button data-v="pve">🤖<br>Với máy</button><button data-v="pvp">👥<br>2 người</button><button data-v="online">🌐<br>Online</button></div>
+      <div id="hint"></div>
+      <select id="mode" style="display:none"><option value="pve">Chơi với máy</option><option value="pvp">2 người (cùng thiết bị)</option><option value="online">Online 2 máy</option></select>
+      <div id="pveOpts">
+        <label>Bạn cầm quân</label>
+        <div class="seg" data-for="side"><button data-v="r">Đỏ (đi trước)</button><button data-v="b">Đen</button></div>
+        <select id="side" style="display:none"><option value="r">Đỏ (đi trước)</option><option value="b">Đen</option></select>
+        <label>Độ khó</label>
+        <div class="seg" data-for="lvl"><button data-v="1">Dễ</button><button data-v="2">Vừa</button><button data-v="3">Khó</button></div>
+        <select id="lvl" style="display:none"><option value="1">Dễ</option><option value="2" selected>Vừa</option><option value="3">Khó</option></select>
+      </div>
+      <label>Kiểu quân cờ</label>
+      <div class="seg" data-for="skin"><button data-v="han">帥 Chữ Hán</button><button data-v="vi">Chữ Việt</button><button data-v="ico">♞ Biểu tượng</button></div>
+      <select id="skin" style="display:none"><option value="han">han</option><option value="vi">vi</option><option value="ico">ico</option></select>
+      <div id="onlineOpts" style="display:none">
+        <button id="mk">Tạo phòng (bạn cầm Đỏ)</button>
+        <input class="inp" id="roomLink" readonly style="display:none">
+        <button class="g" id="cp" style="display:none">Sao chép link mời</button>
+        <label>Hoặc nhập mã phòng để vào (bạn cầm Đen)</label>
+        <input class="inp" id="code" placeholder="Mã phòng">
+        <button class="g" id="jn">Vào phòng</button>
+      </div>
+      <div id="net" class="note"></div>
+      <button id="new">Ván mới</button>
+      <button class="g" id="undo">Đi lại nước trước</button>
+      <button class="g" id="flip">Xoay bàn cờ</button>
+    </div>
+    <div class="card"><div id="log"></div>
+      <div class="note">Bên hết nước đi (chiếu bí hoặc bí nước) là bên thua. Chưa áp dụng luật cấm lặp nước/chiếu dai.</div></div>
+  </div>
+</div>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/online.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

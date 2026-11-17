@@ -2,8 +2,8 @@
 *{box-sizing:border-box}
 body{margin:0;background:#2b2118;color:#f3e9d8;font-family:system-ui,Segoe UI,Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;padding:12px}
 h1{font-size:1.4rem;margin:6px 0 10px}
-.wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;width:100%;max-width:900px}
-#board{position:relative;width:min(94vw,520px);aspect-ratio:9/10;background:#e3b86f;border:6px solid #6b4423;border-radius:6px;user-select:none}
+.col{display:flex;flex-direction:column;align-items:center;gap:10px;width:min(94vw,520px)}
+#board{position:relative;width:min(94vw,520px);aspect-ratio:9/10;align-self:center;flex:none;background:#e3b86f;border:6px solid #6b4423;border-radius:6px;user-select:none}
 #board svg{position:absolute;inset:0;width:100%;height:100%}
 .cell{position:absolute;width:11.111%;height:10%;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .pc{width:86%;height:86%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3d6,#e9c98f);border:3px solid;box-shadow:0 2px 3px rgba(0,0,0,.45),inset 0 0 0 2px #f8e6bf;display:flex;align-items:center;justify-content:center;font-size:min(5.7vw,32px);font-weight:700;font-family:"KaiTi","STKaiti","Noto Serif CJK SC","SimSun",serif;z-index:2;transition:transform .18s,box-shadow .18s}
@@ -16,9 +16,8 @@ h1{font-size:1.4rem;margin:6px 0 10px}
 .dot{position:absolute;width:30%;height:30%;border-radius:50%;background:rgba(30,120,40,.75);z-index:3;pointer-events:none}
 .ring{position:absolute;width:96%;height:96%;border-radius:50%;border:4px solid rgba(30,120,40,.85);z-index:3;pointer-events:none}
 .lm{position:absolute;width:92%;height:92%;border:2px dashed #2a6b2a;border-radius:4px;z-index:1;pointer-events:none}
-.panel{width:min(94vw,300px);display:flex;flex-direction:column;gap:10px}
-.card{background:#3c2e22;border-radius:8px;padding:12px}
-#status{font-weight:600;min-height:2.6em}
+.card{background:#3c2e22;border-radius:10px;padding:12px;width:100%}
+
 label{display:block;font-size:.85rem;margin:6px 0 3px;color:#cbb99f}
 select,button{width:100%;padding:8px;border-radius:6px;border:0;font-size:.95rem}
 select{background:#4b3a2b;color:#f3e9d8}
@@ -52,3 +51,18 @@ button:hover{filter:brightness(1.12)}
 #toast{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%) scale(.6);text-align:center;padding:10px;font-size:min(7vw,34px);font-weight:800;letter-spacing:1px;color:#fff;background:rgba(170,30,25,.92);text-shadow:0 2px 4px rgba(0,0,0,.5);opacity:0;pointer-events:none;z-index:10;transition:opacity .25s,transform .25s}
 #toast.show{opacity:1;transform:translateY(-50%) scale(1)}
 #toast.end{pointer-events:auto;cursor:pointer;background:rgba(20,20,20,.92);color:#ffd95a}
+
+/* ===== Bố cục một cột (giống game Caro) ===== */
+.status{font-weight:700;font-size:1.05rem;text-align:center;min-height:1.5em}
+.col>.seg{width:100%}
+.seg.big button{font-size:.9rem;padding:10px 4px}
+.row{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:8px}
+.grp{display:flex;align-items:center;gap:8px;flex:1 1 220px}
+.lb{font-size:.85rem;color:#cbb99f;white-space:nowrap}
+.grp .seg{flex:1}
+#hint{margin:0;min-height:0}
+.btns{display:flex;gap:8px;padding:10px}
+.btns button{margin:0;flex:1;padding:10px 4px;font-size:.9rem}
+.lb2{font-size:.85rem;color:#cbb99f;margin-bottom:6px}
+#log{max-height:130px}
+.foot{font-size:.75rem;color:#9a8970;text-align:center;margin:0 0 12px}

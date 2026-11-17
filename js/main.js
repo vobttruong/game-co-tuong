@@ -20,9 +20,9 @@ document.querySelectorAll('.seg').forEach(g=>g.querySelectorAll('button').forEac
 
 $('mode').onchange=()=>{
   const m=$('mode').value;
-  $('pveOpts').style.display=m==='pve'?'block':'none';
+  $('pveOpts').style.display=m==='pve'?'':'none';
   $('onlineOpts').style.display=m==='online'?'block':'none';
-  $('undo').style.display=m==='online'?'none':'block';
+  $('undo').style.display=m==='online'?'none':'';
   if(m!=='online'){Net.close();netMsg('')}else netMsg('Tạo phòng hoặc nhập mã phòng để chơi.');
   newGame();
 };

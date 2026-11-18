@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Cờ Tướng</h1>
+<h1>帥 Cờ Tướng Online 將</h1>
 <main class="col">
   <div class="seg big" data-for="mode">
     <button data-v="pve">🤖 Chơi với máy</button><button data-v="pvp">👥 2 người, 1 máy</button><button data-v="online">🌐 Chơi online</button>
@@ -39,11 +39,18 @@
   </div>
 
   <div id="status" class="status"></div>
+  <div id="rmBox" class="card rm" style="display:none">
+    <span id="rmText">Đối thủ muốn đánh lại ván mới (hai bên đổi quân). Bạn đồng ý không?</span>
+    <div class="rmb"><button id="rmYes">Đồng ý</button><button id="rmNo" class="g">Từ chối</button></div>
+  </div>
+  <div class="cap" id="capTop"></div>
 
   <div id="board">
     <svg viewBox="0 0 9 10" preserveAspectRatio="none" id="lines"></svg>
     <div id="toast"></div>
   </div>
+
+  <div class="cap" id="capBot"></div>
 
   <div class="card btns">
     <button id="new">Ván mới</button>

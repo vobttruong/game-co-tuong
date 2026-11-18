@@ -23,6 +23,7 @@ function drawLines(){
 /* ---------- Ván mới / vẽ lại ---------- */
 function newGame(){
   sync();
+  $('new').classList.remove('hot');
   mode=$('mode').value;human=$('side').value;lvl=+$('lvl').value;
   S=startState();hist=[];sel=null;lastM=null;over=false;busy=false;log=[];
   flip=(mode==='pve'&&human==='b')||(mode==='online'&&Net.color==='b');
@@ -55,9 +56,31 @@ function render(){
     const y=document.createElement('span');y.textContent=t;L.appendChild(y);
   });
   L.scrollTop=L.scrollHeight;
+  renderCaps();
   $('status').textContent=over||(busy?'Máy đang suy nghĩ…':`Lượt: ${who(S.turn)}`
     +(inCheckB(S.board,S.turn)?' — CHIẾU TƯỚNG!':'')
     +(mode==='online'&&Net.conn?(S.turn===Net.color?' (đến lượt bạn)':' (chờ đối thủ)'):''));
+}
+
+/* Quân bị ăn của mỗi bên: lấy số quân ban đầu trừ số quân còn trên bàn */
+const INIT={K:1,A:2,E:2,H:2,R:2,C:2,P:5};
+function lost(col){
+  const have={};
+  for(const p of S.board)if(p&&p[0]===col)have[p[1]]=(have[p[1]]||0)+1;
+  const out=[];
+  for(const t of Object.keys(INIT).sort((a,b)=>VAL[b]-VAL[a]))
+    for(let n=have[t]||0;n<INIT[t];n++)out.push(t);
+  return out;
+}
+function renderCaps(){
+  const top=flip?'r':'b',bot=flip?'b':'r';
+  [['capTop',top],['capBot',bot]].forEach(([id,col])=>{
+    const el=$(id),l=lost(col),prev=renderCaps.prev||(renderCaps.prev={}),n0=prev[col]||0;
+    prev[col]=l.length;
+    el.dataset.skin=$('skin').value;
+    el.innerHTML=`<span class="lb">${who(col)} bị ăn:</span>`
+      +(l.length?l.map((t,i)=>`<span class="mp ${col}${i>=n0&&l.length>n0?' new':''}">${lab(col+t)}</span>`).join(''):'<span class="none">chưa có</span>');
+  });
 }
 
 /* ---------- Thao tác ---------- */
@@ -85,7 +108,7 @@ function play(m,remote){
   }else if(chk)txt+='+';
   log.push(txt);render();animateMove(m,cap);
   if(mode==='online'&&!remote&&Net.conn)Net.sendMove(m);
-  if(over)setTimeout(()=>toast(over,0),500);
+  if(over){setTimeout(()=>toast(over,0),500);if(mode==='online')$('new').classList.add('hot')}
   else if(chk)setTimeout(()=>toast('Chiếu tướng!',1200),380);
   if(!over&&mode==='pve'&&S.turn!==human)aiTurn();
 }

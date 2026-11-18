@@ -1,11 +1,11 @@
 /* Chơi online 2 máy qua WebRTC (PeerJS). Người tạo phòng cầm Đỏ, người vào cầm Đen */
-const Net={peer:null,conn:null,color:'r',
-  sendMove(m){if(this.conn)this.conn.send({t:'move',from:m.from,to:m.to})},
-  sendNew(){if(this.conn)this.conn.send({t:'new'})},
+const Net={peer:null,conn:null,color:'r',pending:false,
+  send(o){if(this.conn)this.conn.send(o)},
+  sendMove(m){this.send({t:'move',from:m.from,to:m.to})},
   close(){
     try{this.conn&&this.conn.close()}catch(e){}
     try{this.peer&&this.peer.destroy()}catch(e){}
-    this.conn=this.peer=null;
+    this.conn=this.peer=null;this.pending=false;
   }
 };
 const netMsg=t=>$('net').textContent=t;
@@ -18,9 +18,16 @@ function setupConn(c){
     if(d.t==='move'){ /* kiểm tra lại tính hợp lệ trước khi đi */
       const m=cur.find(x=>x.from===d.from&&x.to===d.to);
       if(m&&!over&&S.turn!==Net.color)play(m,true);
-    }else if(d.t==='new')newGame();
+    }else if(d.t==='rematch'){
+      if(Net.pending){Net.send({t:'accept'});startRematch()} /* hai bên cùng xin: tự đồng ý */
+      else $('rmBox').style.display='flex';
+    }else if(d.t==='accept'){
+      if(Net.pending)startRematch();
+    }else if(d.t==='decline'){
+      Net.pending=false;netMsg('Đối thủ chưa muốn đánh lại.');
+    }
   });
-  c.on('close',()=>{netMsg('⚠️ Đối thủ đã thoát.');Net.conn=null;render()});
+  c.on('close',()=>{netMsg('⚠️ Đối thủ đã thoát.');Net.conn=null;Net.pending=false;$('rmBox').style.display='none';render()});
 }
 function hostRoom(){
   if(typeof Peer==='undefined')return netMsg('Không tải được thư viện PeerJS (kiểm tra mạng).');
@@ -45,3 +52,19 @@ function joinRoom(code){
   });
   Net.peer.on('error',e=>netMsg(e.type==='peer-unavailable'?'Không tìm thấy phòng.':'Lỗi: '+e.type));
 }
+
+/* ---------- Đánh lại ---------- */
+function askRematch(){
+  if(!Net.conn)return newGame();
+  Net.pending=true;Net.send({t:'rematch'});
+  netMsg('Đã gửi lời mời đánh lại, chờ đối thủ đồng ý…');
+}
+/* Ván mới: hai bên đổi quân cho công bằng */
+function startRematch(){
+  Net.pending=false;$('rmBox').style.display='none';
+  Net.color=Net.color==='r'?'b':'r';
+  newGame();
+  netMsg('🔄 Ván mới! Bạn cầm quân '+who(Net.color)+'.');
+}
+$('rmYes').onclick=()=>{Net.send({t:'accept'});startRematch()};
+$('rmNo').onclick=()=>{Net.send({t:'decline'});$('rmBox').style.display='none'};

@@ -1,11 +1,11 @@
 /* Chơi online 2 máy qua WebRTC (PeerJS). Người tạo phòng cầm Đỏ, người vào cầm Đen */
-const Net={peer:null,conn:null,color:'r',pending:false,
+const Net={peer:null,conn:null,color:'r',pending:false,undoPending:false,
   send(o){if(this.conn)this.conn.send(o)},
   sendMove(m){this.send({t:'move',from:m.from,to:m.to})},
   close(){
     try{this.conn&&this.conn.close()}catch(e){}
     try{this.peer&&this.peer.destroy()}catch(e){}
-    this.conn=this.peer=null;this.pending=false;
+    this.conn=this.peer=null;this.pending=this.undoPending=false;
   }
 };
 const netMsg=t=>$('net').textContent=t;
@@ -23,11 +23,18 @@ function setupConn(c){
       else $('rmBox').style.display='flex';
     }else if(d.t==='accept'){
       if(Net.pending)startRematch();
+    }else if(d.t==='undoReq'){ /* đối thủ xin đi lại: chỉ hợp lệ nếu nước cuối là của họ */
+      if(!over&&hist.length&&S.turn===Net.color)$('unBox').style.display='flex';
+      else Net.send({t:'undoNo'});
+    }else if(d.t==='undoYes'){
+      if(Net.undoPending){Net.undoPending=false;undoOne();toast('Đối thủ đồng ý, bạn đi lại nhé.',1800)}
+    }else if(d.t==='undoNo'){
+      Net.undoPending=false;toast('Đối thủ không đồng ý cho đi lại.',2000);
     }else if(d.t==='decline'){
       Net.pending=false;netMsg('Đối thủ chưa muốn đánh lại.');
     }
   });
-  c.on('close',()=>{netMsg('⚠️ Đối thủ đã thoát.');Net.conn=null;Net.pending=false;$('rmBox').style.display='none';render()});
+  c.on('close',()=>{netMsg('⚠️ Đối thủ đã thoát.');Net.conn=null;Net.pending=Net.undoPending=false;$('rmBox').style.display=$('unBox').style.display='none';render()});
 }
 function hostRoom(){
   if(typeof Peer==='undefined')return netMsg('Không tải được thư viện PeerJS (kiểm tra mạng).');
@@ -68,3 +75,14 @@ function startRematch(){
 }
 $('rmYes').onclick=()=>{Net.send({t:'accept'});startRematch()};
 $('rmNo').onclick=()=>{Net.send({t:'decline'});$('rmBox').style.display='none'};
+
+/* ---------- Xin đi lại ---------- */
+function askUndo(){
+  if(!Net.conn)return toast('Chưa kết nối với đối thủ.',1800);
+  if(over||!hist.length||S.turn===Net.color)return toast('Chỉ xin đi lại được ngay sau nước vừa đi của bạn.',2400);
+  if(Net.undoPending)return toast('Đang chờ đối thủ trả lời…',1500);
+  Net.undoPending=true;Net.send({t:'undoReq'});
+  toast('Đã xin đi lại, chờ đối thủ…',1800);
+}
+$('unYes').onclick=()=>{Net.send({t:'undoYes'});$('unBox').style.display='none';undoOne()};
+$('unNo').onclick=()=>{Net.send({t:'undoNo'});$('unBox').style.display='none'};

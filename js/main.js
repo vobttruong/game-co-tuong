@@ -22,7 +22,8 @@ $('mode').onchange=()=>{
   const m=$('mode').value;
   $('pveOpts').style.display=m==='pve'?'':'none';
   $('onlineOpts').style.display=m==='online'?'block':'none';
-  $('undo').style.display=m==='online'?'none':'';
+  $('undo').textContent=m==='online'?'↩️ Xin đi lại':'Đi lại nước trước';
+  $('unBox').style.display='none';
   $('new').textContent=m==='online'?'🔄 Đánh lại':'Ván mới';
   $('rmBox').style.display='none';
   if(m!=='online'){Net.close();netMsg('')}else netMsg('Tạo phòng hoặc nhập mã phòng để chơi.');
@@ -34,7 +35,7 @@ $('skin').onchange=()=>{
   sync();render();
 };
 $('new').onclick=()=>mode==='online'?askRematch():newGame();
-$('undo').onclick=undoMove;
+$('undo').onclick=()=>mode==='online'?askUndo():undoMove();
 $('flip').onclick=()=>{flip=!flip;render()};
 $('toast').onclick=hideToast;
 

@@ -24,6 +24,7 @@ function drawLines(){
 function newGame(){
   sync();
   $('new').classList.remove('hot');
+  Net.undoPending=false;$('unBox').style.display='none';
   mode=$('mode').value;human=$('side').value;lvl=+$('lvl').value;
   S=startState();hist=[];sel=null;lastM=null;over=false;busy=false;log=[];
   flip=(mode==='pve'&&human==='b')||(mode==='online'&&Net.color==='b');
@@ -86,6 +87,7 @@ function renderCaps(){
 /* ---------- Thao tác ---------- */
 function click(i){
   if(over||busy)return;
+  if($('unBox').style.display==='flex')return toast('Hãy trả lời lời xin đi lại trước.',1500);
   if(mode==='pve'&&S.turn!==human)return;
   if(mode==='online'&&(!Net.conn||S.turn!==Net.color))return;
   if(sel!==null){
@@ -116,6 +118,13 @@ function aiTurn(){
   busy=true;render();
   /* chờ hiệu ứng nước đi của người chơi xong rồi máy mới tính */
   setTimeout(()=>{busy=false;if(!over)play(bestMove(S,lvl))},450);
+}
+/* Lùi đúng một nước (dùng cho đi lại khi chơi online), quân trượt ngược về chỗ cũ */
+function undoOne(){
+  const h=hist.pop();if(!h)return;
+  const m=lastM;
+  S=h.S;lastM=h.lastM;log=h.log;sel=null;over=false;hideToast();cur=legal(S);render();
+  if(m)animateMove({from:m.to,to:m.from},null);
 }
 function undoMove(){
   if(busy||!hist.length||mode==='online')return;
